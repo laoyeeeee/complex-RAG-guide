@@ -44,6 +44,30 @@ This is created on top of the version of [nirDiamant](https://github.com/NirDiam
 - [Testing our Finalized Pipeline](#testing-our-finalized-pipeline)
 - [Evaluation using RAGAS](#evaluation-using-ragas)
 - [Summarizing Everything](#summarizing-everything)
+- [Python Package Layout](#python-package-layout)
+
+# Python Package Layout
+
+The notebook has been refactored into a Python package under `rag_pipeline/` to keep each responsibility isolated and reusable:
+
+- `rag_pipeline/config.py`: Pipeline defaults (model names, retrieval config, vector store paths).
+- `rag_pipeline/data.py`: PDF loading, chapter splitting, and quote extraction.
+- `rag_pipeline/summarization.py`: Chapter summarization logic and prompt wiring.
+- `rag_pipeline/vectorstores.py`: Vector store creation/loading plus retriever construction.
+- `rag_pipeline/prompts.py`: Centralized prompt templates for all chains.
+- `rag_pipeline/chains.py`: LLM chain factories and typed outputs.
+- `rag_pipeline/operations.py`: Stateless operations used by graphs (retrieve, filter, answer, grading).
+- `rag_pipeline/workflows/`: LangGraph workflows for qualitative retrieval and plan/execute agent logic.
+- `rag_pipeline/evaluation.py`: RAGAS evaluation helpers.
+- `rag_pipeline/cli.py`: Command-line entry point for running the plan-and-execute pipeline.
+
+This structure makes it easier to test or swap individual components (retrievers, prompts, LLMs) without touching the workflow code.
+
+Quick start (after setting `OPENAI_API_KEY` and `GROQ_API_KEY`):
+
+```bash
+python -m rag_pipeline.cli "what did professor lupin teach?"
+```
 
 # Understanding our RAG Pipeline
 
